@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { extractEntitiesAndRelationships } from '@/lib/gemini';
-import pdf from 'pdf-parse/lib/pdf-parse';
+import * as pdfParse from 'pdf-parse';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const formData = await request.formData();
     const files = formData.getAll('files') as File[];
 
@@ -26,7 +27,7 @@ export async function POST(
     }
 
     const workspace = await prisma.workspace.findUnique({
-      where: { id: params.id }
+      where: { id }
     });
 
     if (!workspace) {
@@ -44,7 +45,7 @@ export async function POST(
       const fileType = file.type;
 
       if (fileType === 'application/pdf') {
-        const data = await pdf(buffer);
+        const data = await (pdfParse as any).default(buffer);
         content = data.text;
       } else if (fileType === 'text/plain' || file.name.endsWith('.txt')) {
         content = buffer.toString('utf-8');
@@ -67,7 +68,7 @@ export async function POST(
       // Create document
       const document = await prisma.document.create({
         data: {
-          workspaceId: params.id,
+          workspaceId: id,
           filename: file.name,
           content,
           fileType
@@ -83,7 +84,7 @@ export async function POST(
         for (const entity of extracted.entities || []) {
           const created = await prisma.entity.create({
             data: {
-              workspaceId: params.id,
+              workspaceId: id,
               documentId: document.id,
               name: entity.name,
               type: entity.type,
@@ -102,7 +103,7 @@ export async function POST(
           if (fromId && toId) {
             await prisma.relationship.create({
               data: {
-                workspaceId: params.id,
+                workspaceId: id,
                 fromEntityId: fromId,
                 toEntityId: toId,
                 relationshipType: rel.type,
