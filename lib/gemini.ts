@@ -2,8 +2,11 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
+// Use gemini-pro for better compatibility across environments
+const MODEL_NAME = 'gemini-pro';
+
 export async function extractEntitiesAndRelationships(text: string) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
   // Truncate text if too long (keep first 5000 chars for better performance)
   const truncatedText = text.length > 5000 ? text.substring(0, 5000) + '...' : text;
@@ -108,7 +111,7 @@ IMPORTANT: Return ONLY the JSON object, nothing else. No explanations, no markdo
 
 export async function checkGeminiConnection(): Promise<boolean> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
     const result = await model.generateContent('Hello');
     await result.response;
     return true;
