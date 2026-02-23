@@ -115,7 +115,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 2. **Upload Documents**: 
    - Click on your newly created workspace
    - Click the "Upload Files" button in the sidebar
-   - Select 3-10 documents (PDF or TXT files)
+   - Select 3-10 TXT files
+   - **Note**: PDF support is not available on hosted version. Convert PDFs to TXT using online tools like:
+     - https://www.pdf2txt.com
+     - https://pdftotext.com
+     - Or copy-paste text from PDF to a TXT file
    - Use the sample documents in `sample-documents/` folder for testing
    - Wait 10-30 seconds for AI processing
 
@@ -236,7 +240,7 @@ docker-compose -f docker-compose.dev.yml logs postgres
 **Solutions**:
 1. Verify `GEMINI_API_KEY` in `.env` file
 2. Check API key at https://makersuite.google.com/app/apikey
-3. Ensure you're using `gemini-1.5-flash` model (check `lib/gemini.ts`)
+3. Ensure you're using `gemini-3.0-flash` model (check `lib/gemini.ts`)
 4. Check API quota limits
 
 ### Build Errors

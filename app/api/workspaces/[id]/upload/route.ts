@@ -2,34 +2,6 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { extractEntitiesAndRelationships } from '@/lib/gemini';
 
-async function extractTextFromPDF(buffer: Buffer): Promise<string> {
-  try {
-    const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
-    
-    const loadingTask = pdfjsLib.getDocument({
-      data: new Uint8Array(buffer),
-      useSystemFonts: true,
-    });
-    
-    const pdf = await loadingTask.promise;
-    let fullText = '';
-    
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const textContent = await page.getTextContent();
-      const pageText = textContent.items
-        .map((item: any) => item.str)
-        .join(' ');
-      fullText += pageText + '\n';
-    }
-    
-    return fullText.trim();
-  } catch (error) {
-    console.error('PDF extraction error:', error);
-    throw new Error('Failed to extract text from PDF');
-  }
-}
-
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -72,22 +44,19 @@ export async function POST(
       const fileType = file.type;
 
       if (fileType === 'application/pdf') {
-        try {
-          content = await extractTextFromPDF(buffer);
-        } catch (pdfError) {
-          console.error('PDF parsing failed:', pdfError);
-          results.push({
-            filename: file.name,
-            error: 'Failed to extract text from PDF'
-          });
-          continue;
-        }
+        // PDF parsing not supported in serverless environment
+        // User should convert PDF to TXT before uploading
+        results.push({
+          filename: file.name,
+          error: 'PDF files are not supported. Please convert to TXT format and re-upload. You can use online tools like pdf2txt.com or copy-paste the text.'
+        });
+        continue;
       } else if (fileType === 'text/plain' || file.name.endsWith('.txt')) {
         content = buffer.toString('utf-8');
       } else {
         results.push({
           filename: file.name,
-          error: 'Unsupported file type. Please use TXT or PDF files.'
+          error: 'Unsupported file type. Please use TXT files only.'
         });
         continue;
       }
@@ -160,7 +129,7 @@ export async function POST(
         results.push({
           filename: file.name,
           documentId: document.id,
-          error: 'Entity extraction failed'
+          error: 'Entity extraction failed. Please check if the file contains valid text.'
         });
       }
     }
