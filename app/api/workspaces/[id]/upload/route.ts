@@ -52,7 +52,7 @@ export async function POST(
           console.error('PDF extraction failed:', pdfError);
           results.push({
             filename: file.name,
-            error: 'Failed to extract text from PDF. Please try converting to TXT first.'
+            error: 'PDF files require conversion to TXT. Please use online tools like pdf2txt.com or copy-paste the text into a TXT file.'
           });
           continue;
         }

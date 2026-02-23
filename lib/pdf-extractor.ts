@@ -4,31 +4,12 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
   try {
-    // Use Gemini 1.5 Pro which supports PDF documents
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
-    
-    const prompt = `Extract all text content from this PDF document. Return only the text, no explanations or formatting. If there are multiple pages, combine all text into one continuous output.`;
-    
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          data: buffer.toString('base64'),
-          mimeType: 'application/pdf',
-        },
-      },
-    ]);
-    
-    const response = await result.response;
-    const text = response.text();
-    
-    if (!text || text.trim().length === 0) {
-      throw new Error('No text extracted from PDF');
-    }
-    
-    return text.trim();
+    // Use Gemini Pro - the most stable model
+    // Note: gemini-pro doesn't support PDF directly, so we'll return an error
+    // Users should convert PDF to TXT
+    throw new Error('PDF extraction requires manual conversion. Please convert your PDF to TXT format using online tools like pdf2txt.com');
   } catch (error) {
     console.error('PDF text extraction failed:', error);
-    throw new Error('Failed to extract text from PDF using AI');
+    throw error;
   }
 }

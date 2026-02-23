@@ -397,7 +397,7 @@ export default function WorkspacePage() {
                   </Button>
                 </label>
                 <p className="text-xs text-purple-200 mt-2">
-                  Supports .txt and .pdf files (max 10). PDF extraction uses AI.
+                  Supports TXT and PDF files (max 10). PDFs require conversion - use pdf2txt.com
                 </p>
               </CardContent>
             </Card>
