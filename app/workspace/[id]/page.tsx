@@ -376,7 +376,7 @@ export default function WorkspacePage() {
                   <input
                     type="file"
                     multiple
-                    accept=".txt,.pdf"
+                    accept=".txt"
                     onChange={handleFileUpload}
                     disabled={uploading}
                     className="hidden"
@@ -397,7 +397,7 @@ export default function WorkspacePage() {
                   </Button>
                 </label>
                 <p className="text-xs text-purple-200 mt-2">
-                  Supports .txt files (max 10). PDF support may be limited on hosted version.
+                  TXT files only (max 10). For PDFs, convert to TXT first.
                 </p>
               </CardContent>
             </Card>

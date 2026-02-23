@@ -44,19 +44,12 @@ export async function POST(
       const fileType = file.type;
 
       if (fileType === 'application/pdf') {
-        // Use dynamic import for pdf-parse to avoid DOMMatrix issues
-        try {
-          const pdfParse = (await import('pdf-parse')).default;
-          const data = await pdfParse(buffer);
-          content = data.text;
-        } catch (pdfError) {
-          console.error('PDF parsing failed:', pdfError);
-          results.push({
-            filename: file.name,
-            error: 'PDF parsing not supported in this environment. Please use TXT files.'
-          });
-          continue;
-        }
+        // PDF parsing is disabled on serverless environments due to DOMMatrix dependency
+        results.push({
+          filename: file.name,
+          error: 'PDF files not supported on hosted version. Please convert to TXT and re-upload.'
+        });
+        continue;
       } else if (fileType === 'text/plain' || file.name.endsWith('.txt')) {
         content = buffer.toString('utf-8');
       } else {
