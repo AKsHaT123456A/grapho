@@ -2,8 +2,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
-// Use gemini-pro for better compatibility across environments
-const MODEL_NAME = 'gemini-pro';
+// Use gemini-2.0-flash-exp for latest features
+const MODEL_NAME = 'gemini-2.0-flash-exp';
 
 export async function extractEntitiesAndRelationships(text: string) {
   const model = genAI.getGenerativeModel({ model: MODEL_NAME });
