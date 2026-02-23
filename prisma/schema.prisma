@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Workspace {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  documents   Document[]
+  entities    Entity[]
+  relationships Relationship[]
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  filename    String
+  content     String
+  fileType    String
+  uploadedAt  DateTime @default(now())
+  entities    Entity[]
+}
+
+model Entity {
+  id              String   @id @default(cuid())
+  workspaceId     String
+  workspace       Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  documentId      String
+  document        Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  name            String
+  type            String
+  confidence      Float    @default(1.0)
+  context         String
+  createdAt       DateTime @default(now())
+  relationsFrom   Relationship[] @relation("FromEntity")
+  relationsTo     Relationship[] @relation("ToEntity")
+}
+
+model Relationship {
+  id              String   @id @default(cuid())
+  workspaceId     String
+  workspace       Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  fromEntityId    String
+  fromEntity      Entity   @relation("FromEntity", fields: [fromEntityId], references: [id], onDelete: Cascade)
+  toEntityId      String
+  toEntity        Entity   @relation("ToEntity", fields: [toEntityId], references: [id], onDelete: Cascade)
+  relationshipType String
+  strength        Float    @default(1.0)
+  context         String?
+  createdAt       DateTime @default(now())
+}
