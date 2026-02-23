@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function extractEntitiesAndRelationships(text: string) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const prompt = `Analyze the following text and extract entities and relationships.
 
@@ -52,7 +52,8 @@ Extract as many meaningful entities and relationships as possible. Be thorough.`
 
 export async function checkGeminiConnection(): Promise<boolean> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    
+  const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
     const result = await model.generateContent('Hello');
     await result.response;
     return true;

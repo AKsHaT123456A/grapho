@@ -28,6 +28,7 @@ An AI-powered web application that extracts entities and relationships from docu
 - Node.js 18+ 
 - npm or yarn
 - Google Gemini API key
+- Docker (optional, for PostgreSQL)
 
 ## Setup Instructions
 
@@ -56,19 +57,47 @@ Edit `.env` and add your Gemini API key:
 
 ```
 GEMINI_API_KEY=your_actual_api_key_here
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/knowledge_graph"
 ```
 
 Get your Gemini API key from: https://makersuite.google.com/app/apikey
 
-### 4. Set up the database
+**Note:** The project is now configured for PostgreSQL. See options below.
+
+### 4. Choose your database setup
+
+**Option A: PostgreSQL with Docker (Recommended)**
+
+```bash
+# Start PostgreSQL
+docker-compose -f docker-compose.dev.yml up -d
+
+# Wait 10 seconds for PostgreSQL to start
+```
+
+**Option B: SQLite (No Docker needed)**
+
+Edit `prisma/schema.prisma`:
+```prisma
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+```
+
+Edit `.env`:
+```env
+DATABASE_URL="file:./dev.db"
+```
+
+### 5. Set up the database
 
 ```bash
 npx prisma generate
 npx prisma migrate dev
 ```
 
-### 5. Run the development server
+### 6. Run the development server
 
 ```bash
 npm run dev
