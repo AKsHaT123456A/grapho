@@ -4,8 +4,8 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
   try {
-    // Use Gemini's vision model to extract text from PDF
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' });
+    // Use Gemini 1.5 Pro which supports PDF documents
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
     
     const prompt = `Extract all text content from this PDF document. Return only the text, no explanations or formatting. If there are multiple pages, combine all text into one continuous output.`;
     
