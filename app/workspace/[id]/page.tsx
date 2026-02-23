@@ -397,7 +397,7 @@ export default function WorkspacePage() {
                   </Button>
                 </label>
                 <p className="text-xs text-purple-200 mt-2">
-                  Supports .txt and .pdf files (max 10)
+                  Supports .txt files (max 10). PDF support may be limited on hosted version.
                 </p>
               </CardContent>
             </Card>

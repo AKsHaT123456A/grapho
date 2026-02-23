@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { extractEntitiesAndRelationships } from '@/lib/gemini';
-import * as pdfParse from 'pdf-parse';
 
 export async function POST(
   request: Request,
@@ -45,14 +44,25 @@ export async function POST(
       const fileType = file.type;
 
       if (fileType === 'application/pdf') {
-        const data = await (pdfParse as any).default(buffer);
-        content = data.text;
+        // Use dynamic import for pdf-parse to avoid DOMMatrix issues
+        try {
+          const pdfParse = (await import('pdf-parse')).default;
+          const data = await pdfParse(buffer);
+          content = data.text;
+        } catch (pdfError) {
+          console.error('PDF parsing failed:', pdfError);
+          results.push({
+            filename: file.name,
+            error: 'PDF parsing not supported in this environment. Please use TXT files.'
+          });
+          continue;
+        }
       } else if (fileType === 'text/plain' || file.name.endsWith('.txt')) {
         content = buffer.toString('utf-8');
       } else {
         results.push({
           filename: file.name,
-          error: 'Unsupported file type'
+          error: 'Unsupported file type. Please use TXT files.'
         });
         continue;
       }
