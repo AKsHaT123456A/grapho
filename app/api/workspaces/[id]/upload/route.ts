@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { extractEntitiesAndRelationships } from '@/lib/gemini';
+import { extractTextFromPDF } from '@/lib/pdf-extractor';
 
 export async function POST(
   request: Request,
@@ -44,19 +45,23 @@ export async function POST(
       const fileType = file.type;
 
       if (fileType === 'application/pdf') {
-        // PDF parsing not supported in serverless environment
-        // User should convert PDF to TXT before uploading
-        results.push({
-          filename: file.name,
-          error: 'PDF files are not supported. Please convert to TXT format and re-upload. You can use online tools like pdf2txt.com or copy-paste the text.'
-        });
-        continue;
+        try {
+          // Use Gemini AI to extract text from PDF
+          content = await extractTextFromPDF(buffer);
+        } catch (pdfError) {
+          console.error('PDF extraction failed:', pdfError);
+          results.push({
+            filename: file.name,
+            error: 'Failed to extract text from PDF. Please try converting to TXT first.'
+          });
+          continue;
+        }
       } else if (fileType === 'text/plain' || file.name.endsWith('.txt')) {
         content = buffer.toString('utf-8');
       } else {
         results.push({
           filename: file.name,
-          error: 'Unsupported file type. Please use TXT files only.'
+          error: 'Unsupported file type. Please use TXT or PDF files.'
         });
         continue;
       }
