@@ -35,7 +35,8 @@ An AI-powered web application that extracts entities and relationships from docu
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone git@github.com:AKsHaT123456A/grapho.git
+
 cd knowledge-graph-builder
 ```
 
@@ -60,7 +61,7 @@ GEMINI_API_KEY=your_actual_api_key_here
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/knowledge_graph"
 ```
 
-Get your Gemini API key from: https://makersuite.google.com/app/apikey
+Get your Gemini API key from: https://aistudio.google.com/api-keys
 
 **Note:** The project is now configured for PostgreSQL. See options below.
 
@@ -107,6 +108,45 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Usage
 
+### Quick Steps to See Your Knowledge Graph
+
+1. **Create a Workspace**: On the home page, enter a name (e.g., "Tech News") and click "Create Workspace"
+
+2. **Upload Documents**: 
+   - Click on your newly created workspace
+   - Click the "Upload Files" button in the sidebar
+   - Select 3-10 documents (PDF or TXT files)
+   - Use the sample documents in `sample-documents/` folder for testing
+   - Wait 10-30 seconds for AI processing
+
+3. **View the Graph**: 
+   - The interactive knowledge graph will appear automatically
+   - Colored nodes represent different entity types:
+     - Blue: People
+     - Purple: Organizations
+     - Green: Locations
+     - Orange: Dates
+     - Pink: Features/Products
+     - Indigo: Concepts
+   - Arrows show relationships between entities
+   - Animated arrows indicate strong relationships
+
+4. **Interact with Entities**:
+   - **Click any node** to see detailed information:
+     - Source snippets from documents
+     - All linked entities
+     - Relationship types and strengths
+     - Edit entity name/type
+     - Merge with other entities
+     - Delete entity
+   - **Search**: Use the search box to find specific entities
+   - **Filter**: Click entity type badges to filter the graph
+   - **Export**: Download the graph as JSON
+
+5. **Check System Status**: Visit `/status` page to verify all services are running
+
+### Detailed Usage
+
 1. **Create a Workspace**: Enter a name and optional description
 2. **Upload Documents**: Click on a workspace and upload 3-10 documents (PDF or TXT)
 3. **View the Graph**: The AI will extract entities and relationships automatically
@@ -133,15 +173,88 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## What's Not Done
 
-- Entity editing UI (API exists but no UI)
-- Entity merging UI (API exists but no UI)
 - Advanced filters (date range, confidence score)
 - CSV export
-- Workspace thumbnails
 - Real-time extraction progress indicator
 - Pagination for large graphs
 - Graph layout customization
 - Undo/redo functionality
+
+## Troubleshooting
+
+### Entity Extraction Fails
+
+**Problem**: Documents upload but show "Entity extraction failed"
+
+**Solutions**:
+1. Check Gemini API key is correct in `.env`
+2. Verify API key has quota remaining at [Google AI Studio](https://makersuite.google.com/app/apikey)
+3. Check terminal logs for specific error messages
+4. Try with smaller documents first (< 5000 characters)
+5. Ensure document has actual text content (not just images)
+
+### Graph is Empty
+
+**Problem**: Graph shows but no nodes appear
+
+**Solutions**:
+1. Check if entities were extracted (see Statistics panel)
+2. Try clearing search/filter settings
+3. Refresh the page
+4. Check browser console for errors (F12)
+
+### Can't Click on Nodes
+
+**Problem**: Clicking nodes doesn't show details
+
+**Solutions**:
+1. Make sure you're clicking directly on the node (colored circle)
+2. Check browser console for JavaScript errors
+3. Try refreshing the page
+4. Ensure the workspace loaded completely
+
+### PostgreSQL Connection Issues
+
+**Problem**: "Database connection failed" on status page
+
+**Solutions**:
+```bash
+# Check if PostgreSQL is running
+docker-compose -f docker-compose.dev.yml ps
+
+# Restart PostgreSQL
+docker-compose -f docker-compose.dev.yml restart
+
+# Check logs
+docker-compose -f docker-compose.dev.yml logs postgres
+```
+
+### Gemini API Issues
+
+**Problem**: "LLM connection failed" on status page
+
+**Solutions**:
+1. Verify `GEMINI_API_KEY` in `.env` file
+2. Check API key at https://makersuite.google.com/app/apikey
+3. Ensure you're using `gemini-1.5-flash` model (check `lib/gemini.ts`)
+4. Check API quota limits
+
+### Build Errors
+
+**Problem**: `npm run build` fails
+
+**Solutions**:
+```bash
+# Clear build cache
+Remove-Item -Recurse -Force .next
+
+# Reinstall dependencies
+Remove-Item -Recurse -Force node_modules
+npm install
+
+# Try building again
+npm run build
+```
 
 ## Deployment
 

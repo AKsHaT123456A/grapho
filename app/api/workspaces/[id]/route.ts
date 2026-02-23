@@ -10,28 +10,52 @@ export async function GET(
     const workspace = await prisma.workspace.findUnique({
       where: { id },
       include: {
-        documents: true,
+        documents: {
+          select: {
+            id: true,
+            filename: true,
+            content: true,
+          },
+        },
         entities: {
           include: {
+            document: {
+              select: {
+                id: true,
+                filename: true,
+              },
+            },
             relationsFrom: {
               include: {
-                toEntity: true
-              }
+                toEntity: {
+                  select: {
+                    id: true,
+                    name: true,
+                    type: true,
+                  },
+                },
+              },
             },
             relationsTo: {
               include: {
-                fromEntity: true
-              }
-            }
-          }
+                fromEntity: {
+                  select: {
+                    id: true,
+                    name: true,
+                    type: true,
+                  },
+                },
+              },
+            },
+          },
         },
         relationships: {
           include: {
             fromEntity: true,
-            toEntity: true
-          }
-        }
-      }
+            toEntity: true,
+          },
+        },
+      },
     });
 
     if (!workspace) {

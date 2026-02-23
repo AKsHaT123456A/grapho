@@ -26,6 +26,7 @@ import {
   Trash2,
   Loader2,
 } from 'lucide-react';
+import EntityDetailsPanel from '@/components/EntityDetailsPanel';
 
 interface Entity {
   id: string;
@@ -33,6 +34,32 @@ interface Entity {
   type: string;
   confidence: number;
   context: string;
+  document?: {
+    id: string;
+    filename: string;
+  };
+  relationsFrom?: Array<{
+    id: string;
+    relationshipType: string;
+    strength: number;
+    context: string | null;
+    toEntity: {
+      id: string;
+      name: string;
+      type: string;
+    };
+  }>;
+  relationsTo?: Array<{
+    id: string;
+    relationshipType: string;
+    strength: number;
+    context: string | null;
+    fromEntity: {
+      id: string;
+      name: string;
+      type: string;
+    };
+  }>;
 }
 
 interface Relationship {
@@ -49,7 +76,11 @@ interface WorkspaceData {
   description: string | null;
   entities: Entity[];
   relationships: Relationship[];
-  documents: any[];
+  documents: Array<{
+    id: string;
+    filename: string;
+    content: string;
+  }>;
 }
 
 const entityTypeColors: Record<string, string> = {
@@ -108,7 +139,10 @@ export default function WorkspacePage() {
       id: entity.id,
       data: {
         label: (
-          <div className="text-center">
+          <div 
+            className="text-center cursor-pointer"
+            onClick={() => handleNodeClick(entity.id)}
+          >
             <div className="font-semibold text-sm">{entity.name}</div>
             <div className="text-xs opacity-75">{entity.type}</div>
           </div>
@@ -126,6 +160,7 @@ export default function WorkspacePage() {
         padding: '10px',
         fontSize: '12px',
         width: 150,
+        cursor: 'pointer',
       },
     }));
 
@@ -164,6 +199,20 @@ export default function WorkspacePage() {
 
     setNodes(newNodes);
     setEdges(newEdges);
+  };
+
+  const handleNodeClick = (entityId: string) => {
+    const entity = workspace?.entities.find((e) => e.id === entityId);
+    if (entity) {
+      setSelectedEntity(entity);
+    }
+  };
+
+  const handleEntityClick = (entityId: string) => {
+    const entity = workspace?.entities.find((e) => e.id === entityId);
+    if (entity) {
+      setSelectedEntity(entity);
+    }
   };
 
   useEffect(() => {
@@ -246,6 +295,16 @@ export default function WorkspacePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {selectedEntity && (
+        <EntityDetailsPanel
+          entity={selectedEntity}
+          allEntities={workspace?.entities || []}
+          onClose={() => setSelectedEntity(null)}
+          onUpdate={fetchWorkspace}
+          onEntityClick={handleEntityClick}
+        />
+      )}
+      
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">

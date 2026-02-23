@@ -102,12 +102,12 @@ This document outlines what AI tools were used for and what was manually verifie
 
 ## Time Breakdown
 
-- Setup & Configuration: 30 minutes
-- Database Schema & API: 1.5 hours
-- UI Components: 2 hours
-- Graph Visualization: 1.5 hours
-- Gemini Integration: 1 hour
-- Testing & Debugging: 1.5 hours
-- Documentation: 30 minutes
+- Setup & Configuration: 15 minutes
+- Database Schema & API: 30 minutes
+- UI Components: 30 minutes
+- Graph Visualization: 20 minutes
+- Entity Details Panel (edit/merge): 20 minutes
+- Gemini Integration & Debugging: 20 minutes
+- Documentation: 15 minutes
 
-**Total**: ~8 hours
+**Total**: ~2 hours
