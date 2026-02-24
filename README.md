@@ -37,7 +37,6 @@ An AI-powered web application that extracts entities and relationships from docu
 ```bash
 git clone git@github.com:AKsHaT123456A/grapho.git
 
-cd knowledge-graph-builder
 ```
 
 ### 2. Install dependencies
@@ -116,10 +115,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
    - Click on your newly created workspace
    - Click the "Upload Files" button in the sidebar
    - Select 3-10 TXT files
-   - **Note**: PDF support is not available on hosted version. Convert PDFs to TXT using online tools like:
-     - https://www.pdf2txt.com
-     - https://pdftotext.com
-     - Or copy-paste text from PDF to a TXT file
    - Use the sample documents in `sample-documents/` folder for testing
    - Wait 10-30 seconds for AI processing
 
