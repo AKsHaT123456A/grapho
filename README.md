@@ -269,8 +269,8 @@ Note: SQLite works on Vercel but data is ephemeral. For production, consider Pos
 ### Docker (Alternative)
 
 ```bash
-docker build -t knowledge-graph-builder .
-docker run -p 3000:3000 -e GEMINI_API_KEY=your_key knowledge-graph-builder
+docker build -t .
+docker run -p 3000:3000 -e GEMINI_API_KEY=your_key 
 ```
 
 ## Project Structure
