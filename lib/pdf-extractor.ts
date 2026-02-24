@@ -1,24 +1,20 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-
 export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
   try {
-    // Dynamic import to avoid issues during build
-    const pdfParse = (await import('pdf-parse')).default;
+    // Import from lib/pdf-parse to avoid Next.js bundling issues
+    const pdfParse = (await import("pdf-parse/lib/pdf-parse.js" as any)).default;
+    const data = await pdfParse(buffer);
+    console.log({data});
     
-    const data = await pdfParse(buffer, {
-      // Disable canvas to avoid DOMMatrix issues in serverless
-      max: 0,
-    });
-    
-    if (!data.text || data.text.trim().length === 0) {
-      throw new Error('No text extracted from PDF');
+    if (!data.text || !data.text.trim()) {
+      throw new Error("No extractable text found in PDF.");
     }
-    
+
     return data.text.trim();
   } catch (error) {
-    console.error('PDF text extraction failed:', error);
-    throw new Error('Failed to extract text from PDF. The PDF may be image-based or corrupted.');
+    console.error("PDF extraction failed:", error);
+    if (error instanceof Error) {
+      throw new Error(`PDF parsing error: ${error.message}`);
+    }
+    throw new Error("PDF parsing failed with unknown error");
   }
 }

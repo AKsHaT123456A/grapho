@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { extractEntitiesAndRelationships } from '@/lib/gemini';
 import { extractTextFromPDF } from '@/lib/pdf-extractor';
+export const runtime = "nodejs";
 
 export async function POST(
   request: Request,
