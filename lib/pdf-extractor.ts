@@ -3,7 +3,6 @@ export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
     // Import from lib/pdf-parse to avoid Next.js bundling issues
     const pdfParse = (await import("pdf-parse/lib/pdf-parse.js" as any)).default;
     const data = await pdfParse(buffer);
-    console.log({data});
     
     if (!data.text || !data.text.trim()) {
       throw new Error("No extractable text found in PDF.");
